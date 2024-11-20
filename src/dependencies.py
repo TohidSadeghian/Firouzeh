@@ -1,4 +1,4 @@
-from database import SessionLocal
+from .url_shortener.database import SessionLocal
 
 
 def get_db():

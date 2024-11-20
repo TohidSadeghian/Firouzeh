@@ -1,0 +1,34 @@
+services:
+  api:
+    container_name: urlshortener_service
+    build: ./src
+    command: uvicorn app.main:app --host 0.0.0.0 --port {DEVELOPMENT_SERVER_PORT} --reload
+    volumes:
+      - ./src:/src
+    ports:
+      - ${DEVELOPMENT_SERVER_PORT}:${DEVELOPMENT_SERVER_PORT}
+    environment:
+      - DATABASE_URL=postgresql://dev:dev@db:5432/dev
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+        - .env
+  db:
+    container_name: urshortener_db
+    image: postgres:15.3
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DEVELOPMENT_DATABASE_NAME}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d dev -U dev"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  postgres_data:

@@ -8,3 +8,7 @@ DATABASE_NAME=os.environ.get("DATABASE_NAME")
 # redis
 REDIS_PASSWORD=os.environ.get("REDIS_PASSWORD")
 REDIS_NAMESPACE= os.environ.get("REDIS_PASSWORD", "url_shortener")
+
+
+# Char length for shortened_url
+URL_SHORTENER_CHAR_LEN = 5

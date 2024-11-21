@@ -10,6 +10,7 @@ from .service import UrlShortenerHandler
 
 router = APIRouter()
 
+
 @router.post('/create_url/', response_model=UrlShortenerRedirect, status_code=status.HTTP_201_CREATED)
 async def create_shortened_url(url:UrlShortenerCreate, db: Session = Depends(get_db)):
     """

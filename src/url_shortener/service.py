@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from .models import URLShortener as UrlShortnerModel
 from .schemas import UrlShortenerCreate
 from .utils import generate_random_key
+from ..dependencies import cache
 
 
 class UrlShortenerHandler:
@@ -13,17 +14,25 @@ class UrlShortenerHandler:
         db.add(obj)
         db.commit()
         db.refresh(obj)
+        await cache.set(f"{shortened_url}", f"{url.original_url}")
         return obj
 
-    async def get_db_url_by_key(self, db: Session, url_key: str) -> UrlShortnerModel:
-        return (
+    async def get_url_obj(self, db: Session, url_key: str) -> UrlShortnerModel:
+        cached_key = await cache.get(f"{url_key}")
+        if cached_key:
+            return cached_key
+        obj = (
             db.query(UrlShortnerModel)
             .filter(UrlShortnerModel.shortened_url == url_key)
             .first()
         )
+        if obj is not None:
+            await cache.set(f"{url_key}", f"{obj.original_url}")
+            return obj.original_url
+        return None
 
     async def get_unique_string(self, db: Session)-> str:
-        key = generate_random_key()
-        while await self.get_db_url_by_key(db, key):
-            key = generate_random_key()
+        key = await generate_random_key()
+        while await self.get_url_obj(db, key):
+            key = await generate_random_key()
         return key

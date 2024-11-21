@@ -24,7 +24,7 @@ async def forward_to_target_url(
         url_key: str,
         db: Session = Depends(get_db)
 ):
-    if db_url := await UrlShortenerHandler().get_db_url_by_key(db=db, url_key=url_key):
-        return RedirectResponse(db_url.original_url)
+    if db_url := await UrlShortenerHandler().get_url_obj(db=db, url_key=url_key):
+        return RedirectResponse(db_url)
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=Messages.URL_NOT_FOUND.value)

@@ -1,6 +1,5 @@
 import string
 import secrets
-from sqlalchemy.orm import Session
 
 
 async def generate_random_key(length: int = 5) -> str:

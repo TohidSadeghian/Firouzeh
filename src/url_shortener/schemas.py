@@ -5,5 +5,5 @@ class UrlShortenerCreate(BaseModel):
 	original_url: str
 
 
-class UrlShortenerRedirect(BaseModel):
+class UrlShortenerRedirect(UrlShortenerCreate):
 	shortened_url: str

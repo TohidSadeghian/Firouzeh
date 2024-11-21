@@ -22,6 +22,21 @@ services:
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
       - POSTGRES_DB=${DATABASE_NAME}
 
+  redis:
+    container_name : urlshortener_redis
+    image: redis:5.0.8
+    command:
+    - /bin/sh
+    - -c
+    - redis-server --requirepass "$${REDIS_PASSWORD}"
+    restart: always
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+    ports:
+        - "${REDIS_CONTAINER_PORT}:5672"
+    env_file:
+        - .env
+
 
 volumes:
   postgres_data:
